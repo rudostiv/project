@@ -1,0 +1,36 @@
+### MAIN configure file
+
+---
+
+
+- hosts: r6-leaf1
+  gather_facts: no
+  connection: local
+
+  tasks:  
+    - name: Create config for r6-leaf1
+      template: 
+        src: conf.j2
+        dest: /home/rudostiv/Arista/configs/r6-leaf1.conf
+ 
+- hosts: r6-leaf2
+  gather_facts: no
+  connection: local
+       
+  tasks:   
+    - name: Create config for r6-leaf2
+      template:
+        src: conf.j2
+        dest: /home/rudostiv/Arista/configs/r6-leaf2.conf
+    
+- hosts: r6-leaf3
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: Create config for r6-leaf3
+      template:
+        src: conf.j2
+        dest: /home/rudostiv/Arista/configs/r6-leaf3.conf
+
+
