@@ -1,0 +1,39 @@
+# templates/conf.j2
+
+{% for int in interfaces %}
+vlan {{ int.vlan }}
+name {{ int.description }}
+interface vlan {{ int.vlan }}
+  description {{ int.description }}
+  vrf forwarding {{ int.vrf }}
+  arp timeout 240
+  ip address virtual {{ int.address }}
+{% endfor %}
+
+interface vxlan1
+{% for v in vxlan %}
+  vxlan vlan{{ v.vlan }} vni 1{{ v.vlan }}
+{% endfor %}
+  vxlan vrf BLUE vni 20200
+  vxlan vrf GREEN vni 20300
+
+
+{% if bgp_as is defined %}
+router bgp {{ bgp_as }}
+{% endif %}
+{% for n in vlans %}
+{% if bgp_id is defined %}
+vlan {{ n.vlan }}
+  rd {{ bgp_id }}:{{ n.vlan }}
+  route-target both {{ n.vlan }}:{{ n.vlan }}
+  redistrube learned
+{% endif %}
+{% endfor %}    
+
+{% for t in vrfs %}
+vrf {{ t.group }} 
+  rd {{ bgp_id }}:{{ t.vni }}
+  address-family ipv4
+    route-target import {{ t.vni}}:{{ t.vni }}
+    route-target export {{ t.vni}}:{{ t.vni }}
+{% endfor %}
